@@ -1,7 +1,7 @@
 # 🧠 PaperMind AI
 
 PaperMind AI is a modern, high-performance **Retrieval-Augmented Generation (RAG)** platform that enables users to upload PDF documents and have natural, context-aware conversations with them. 
-**Live Demo:** https://papermind-ai-app.vercel.app
+**Live Demo:** https://papermind-ai-app.vercel.app/
 
 Built using Next.js 15, Pinecone, LangChain, OpenAI, Prisma, Kinde Auth, and Razorpay, PaperMind AI offers a fast, secure, and type-safe user experience.
 
