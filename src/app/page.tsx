@@ -20,7 +20,7 @@ export default function Home() {
           to your PDFs.
         </h1>
         <p className='mt-5 max-w-prose text-zinc-700 sm:text-lg'>
-          Papermind AI allows you to have conversations with any
+          PaperMind AI allows you to have conversations with any
           PDF document. Simply upload your file and start
           asking questions right away.
         </p>
