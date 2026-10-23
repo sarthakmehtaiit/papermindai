@@ -28,7 +28,7 @@ Built using Next.js 15, Pinecone, LangChain, Google Gemini, Prisma, Kinde Auth, 
 | **Authentication** | [Kinde Auth](https://kinde.com/) | Secure user authentication and management |
 | **Vector Storage** | [Pinecone](https://www.pinecone.io/) | High-performance vector database for semantic search namespaces |
 | **Orchestration** | [LangChain](https://js.langchain.com/) | Document loading, embedding, and vector store helpers |
-| **AI Models** | [Google Gemini](https://ai.google.dev/) | `gemini-embedding-001` for embeddings & `gemini-3.8-flash` for responses |
+| **AI Models** | [Google Gemini](https://ai.google.dev/) | `gemini-embedding-001` for embeddings & `gemini-3.5-flash-lite` for responses |
 | **Upload Service** | [UploadThing](https://uploadthing.com/) | Fast and reliable file upload handler |
 | **Payment Gateway** | [Razorpay](https://razorpay.com/) | Subscription creation, verification, and plans management |
 | **API Layer** | [tRPC](https://trpc.io/) + React Query | Typesafe API routing and query state caching |
@@ -50,14 +50,14 @@ graph TD
     I --> J[Similarity Search on Pinecone Namespace]
     J --> K[Retrieve Top 4 Relevant Context Chunks]
     K --> L[Format System Prompt with Context & History]
-    L --> M[Call Gemini gemini-3.8-flash]
+    L --> M[Call Gemini gemini-3.5-flash-lite]
     M --> N[Stream Response to User + Save Message to PostgreSQL]
 ```
 
 1.  **Ingestion**: When a PDF is uploaded, it is fetched from UploadThing, loaded page-by-page using `@langchain/community/document_loaders/fs/pdf`, and mapped to standard document schemas.
 2.  **Vectorization**: The documents are embedded using Google's `gemini-embedding-001` model (3072 dimensions) and saved inside a Pinecone vector index (`papermind`) under a unique namespace corresponding to the file ID.
 3.  **Retrieval**: When a query is sent, the system performs a similarity search inside Pinecone to retrieve the top 4 most relevant text segments.
-4.  **Generation**: The system formats the prompt containing the retrieved context, the user's message, and previous message history, prompting `gemini-3.8-flash` to answer the question, streaming the response to the user.
+4.  **Generation**: The system formats the prompt containing the retrieved context, the user's message, and previous message history, prompting `gemini-3.5-flash-lite` to answer the question, streaming the response to the user.
 
 ---
 

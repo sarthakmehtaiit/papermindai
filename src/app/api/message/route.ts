@@ -71,7 +71,7 @@ export const POST = async (req: NextRequest) => {
 
     // Stream the Gemini response back to the client
     const result = await streamText({
-        model: google('gemini-3.8-flash'),
+        model: google('gemini-3.5-flash-lite'),
         temperature: 0,
         messages: [
             {
