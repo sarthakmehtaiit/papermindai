@@ -3,7 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { getPineconeClient } from "@/lib/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { getEmbeddings } from "@/lib/embeddings";
 import { PineconeStore } from "@langchain/pinecone";
 import { PLANS } from "@/config/plan";
 import { on } from "events";
@@ -57,8 +57,8 @@ const onUploadComplete = async ({ metadata, file }: {
     console.log('File record created:', createdFile.id);
 
     // Validate environment variables
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set in environment variables');
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      throw new Error('GOOGLE_GENERATIVE_AI_API_KEY is not set in environment variables');
     }
 
     // Fetch the PDF file
@@ -107,11 +107,8 @@ const onUploadComplete = async ({ metadata, file }: {
     const indexStats = await pineconeIndex.describeIndexStats();
     console.log('Pinecone index stats:', indexStats);
 
-    // Initialize OpenAI embeddings
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-      modelName: "text-embedding-3-small",
-    });
+    // Initialize Gemini embeddings
+    const embeddings = getEmbeddings();
 
     console.log('Creating embeddings and storing in Pinecone...');
 

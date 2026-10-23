@@ -3,7 +3,7 @@
 PaperMind AI is a modern, high-performance **Retrieval-Augmented Generation (RAG)** platform that enables users to upload PDF documents and have natural, context-aware conversations with them. 
 **Live Demo:** https://papermind-ai.vercel.app/
 
-Built using Next.js 15, Pinecone, LangChain, OpenAI, Prisma, Kinde Auth, and Razorpay, PaperMind AI offers a fast, secure, and type-safe user experience.
+Built using Next.js 15, Pinecone, LangChain, Google Gemini, Prisma, Kinde Auth, and Razorpay, PaperMind AI offers a fast, secure, and type-safe user experience.
 
 ---
 
@@ -28,7 +28,7 @@ Built using Next.js 15, Pinecone, LangChain, OpenAI, Prisma, Kinde Auth, and Raz
 | **Authentication** | [Kinde Auth](https://kinde.com/) | Secure user authentication and management |
 | **Vector Storage** | [Pinecone](https://www.pinecone.io/) | High-performance vector database for semantic search namespaces |
 | **Orchestration** | [LangChain](https://js.langchain.com/) | Document loading, embedding, and vector store helpers |
-| **AI Models** | [OpenAI](https://openai.com/) | `text-embedding-3-small` for embeddings & `gpt-3.5-turbo` for responses |
+| **AI Models** | [Google Gemini](https://ai.google.dev/) | `gemini-embedding-001` for embeddings & `gemini-3.8-flash` for responses |
 | **Upload Service** | [UploadThing](https://uploadthing.com/) | Fast and reliable file upload handler |
 | **Payment Gateway** | [Razorpay](https://razorpay.com/) | Subscription creation, verification, and plans management |
 | **API Layer** | [tRPC](https://trpc.io/) + React Query | Typesafe API routing and query state caching |
@@ -44,20 +44,20 @@ graph TD
     B --> C[Fetch PDF Blob]
     C --> D[LangChain PDFLoader Parses Text]
     D --> E[Check Page Limits based on User Plan]
-    E --> F[OpenAI Embeddings text-embedding-3-small]
+    E --> F[Gemini Embeddings gemini-embedding-001]
     F --> G[Upsert Vectors into Pinecone Index]
     H[User Sends Chat Message] --> I[Vectorize Message query]
     I --> J[Similarity Search on Pinecone Namespace]
     J --> K[Retrieve Top 4 Relevant Context Chunks]
     K --> L[Format System Prompt with Context & History]
-    L --> M[Call OpenAI gpt-3.5-turbo]
+    L --> M[Call Gemini gemini-3.8-flash]
     M --> N[Stream Response to User + Save Message to PostgreSQL]
 ```
 
 1.  **Ingestion**: When a PDF is uploaded, it is fetched from UploadThing, loaded page-by-page using `@langchain/community/document_loaders/fs/pdf`, and mapped to standard document schemas.
-2.  **Vectorization**: The documents are embedded using OpenAI's `text-embedding-3-small` model and saved inside a Pinecone vector index (`papermind`) under a unique namespace corresponding to the file ID.
+2.  **Vectorization**: The documents are embedded using Google's `gemini-embedding-001` model (3072 dimensions) and saved inside a Pinecone vector index (`papermind`) under a unique namespace corresponding to the file ID.
 3.  **Retrieval**: When a query is sent, the system performs a similarity search inside Pinecone to retrieve the top 4 most relevant text segments.
-4.  **Generation**: The system formats the prompt containing the retrieved context, the user's message, and previous message history, prompting `gpt-3.5-turbo` to answer the question, streaming the response to the user.
+4.  **Generation**: The system formats the prompt containing the retrieved context, the user's message, and previous message history, prompting `gemini-3.8-flash` to answer the question, streaming the response to the user.
 
 ---
 
@@ -75,7 +75,7 @@ graph TD
     ├── components/          # Reusable React components (Chat, PDF Renderer, UI elements)
     ├── config/              # App configurations (plans, query limits)
     ├── db/                  # Prisma client instance caching
-    ├── lib/                 # Core SDK clients (OpenAI, Pinecone, Razorpay, UploadThing)
+    ├── lib/                 # Core SDK clients (Gemini embeddings, Pinecone, Razorpay, UploadThing)
     ├── trpc/                # tRPC backend router and frontend provider hooks
     ├── types/               # Custom typescript declarations
     └── middleware.ts        # Kinde auth page protection middleware
@@ -108,8 +108,8 @@ KINDE_POST_LOGIN_REDIRECT_URL="http://localhost:3000/dashboard"
 # UploadThing configuration token
 UPLOADTHING_TOKEN=""
 
-# OpenAI API Key
-OPENAI_API_KEY=""
+# Google Gemini API Key
+GOOGLE_GENERATIVE_AI_API_KEY=""
 
 # Pinecone Vector DB API Key
 PINECONE_API_KEY=""

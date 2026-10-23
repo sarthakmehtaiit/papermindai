@@ -2,11 +2,11 @@ import { db } from "@/db";
 import { getPineconeClient } from "@/lib/pinecone";
 import { SendMessageValidator } from "@/lib/SendMessageValidator";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { getEmbeddings } from "@/lib/embeddings";
 import { PineconeStore } from "@langchain/pinecone";
 import { NextRequest } from "next/server";
 import { streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 
 export const POST = async (req: NextRequest) => {
     //endpoint for asking a question to pdf file
@@ -42,9 +42,7 @@ export const POST = async (req: NextRequest) => {
     })
 
     // 1: vectorize message
-    const embeddings = new OpenAIEmbeddings({
-        openAIApiKey: process.env.OPENAI_API_KEY
-    })
+    const embeddings = getEmbeddings()
 
     const pinecone = await getPineconeClient()
     const pineconeIndex = pinecone.Index('papermind')
@@ -71,9 +69,9 @@ export const POST = async (req: NextRequest) => {
         content: msg.text
     }))
 
-    // Use streamText instead of deprecated OpenAIStream
+    // Stream the Gemini response back to the client
     const result = await streamText({
-        model: openai('gpt-3.5-turbo'),
+        model: google('gemini-3.8-flash'),
         temperature: 0,
         messages: [
             {
