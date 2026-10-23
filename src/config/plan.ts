@@ -20,9 +20,11 @@ export const PLANS = [
     price: {
       amount: 1200,
       priceIds: {
-        test: 'plan_QjOVFVO7kVeJnj',
-        production: 'plan_QjOVFVO7kVeJnj',
+        test: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID ?? '',
+        production: process.env.NEXT_PUBLIC_RAZORPAY_PLAN_ID ?? '',
       },
     },
   },
 ]
+// Razorpay is optional: leave this unset to run the app on the Free plan only.
+export const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'

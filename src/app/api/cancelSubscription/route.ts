@@ -2,14 +2,19 @@ import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/db";
-
-// Initialize Razorpay client
-const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_SECRET_ID!,
-});
+import { PAYMENTS_ENABLED } from "@/config/plan";
 
 export async function POST(request: Request) {
+  if (!PAYMENTS_ENABLED) {
+    return NextResponse.json({ message: "Payments are disabled" }, { status: 503 });
+  }
+
+  // Created per request: Razorpay throws at construction when keys are missing
+  const razorpay = new Razorpay({
+    key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_SECRET_ID!,
+  });
+
   const { subscriptionId, cancelAtCycleEnd } = await request.json();
 
   // Authenticate user (optional, but recommended)

@@ -114,7 +114,8 @@ GOOGLE_GENERATIVE_AI_API_KEY=""
 # Pinecone Vector DB API Key
 PINECONE_API_KEY=""
 
-# Razorpay Subscription Billing
+# Razorpay Subscription Billing (optional: set NEXT_PUBLIC_PAYMENTS_ENABLED="true" to turn on the Pro plan)
+NEXT_PUBLIC_PAYMENTS_ENABLED=""
 NEXT_PUBLIC_RAZORPAY_KEY_ID=""
 RAZORPAY_SECRET_ID=""
 NEXT_PUBLIC_RAZORPAY_PLAN_ID=""

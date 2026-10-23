@@ -1,6 +1,7 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { PLANS } from "@/config/plan"
+import { PAYMENTS_ENABLED, PLANS } from "@/config/plan"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ArrowRight, Check, HelpCircle, Link, Minus } from "lucide-react"
 import SubscriptionButton from '../../app/pricing/subcribe'
@@ -156,7 +157,13 @@ const Pricing = async () => {
                                             </li>
                                         ))}
                                         { plan.toLowerCase() === "pro" ? (
-                                             <SubscriptionButton />
+                                             PAYMENTS_ENABLED ? (
+                                                 <SubscriptionButton />
+                                             ) : (
+                                                 <Button disabled className="w-full">
+                                                     Coming soon
+                                                 </Button>
+                                             )
                                         ): (
                                             <div></div>
                                         )

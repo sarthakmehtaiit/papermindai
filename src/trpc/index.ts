@@ -5,6 +5,7 @@ import { db } from "@/db"
 import { z } from "zod"
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query"
 import Razorpay from "razorpay"
+import { PAYMENTS_ENABLED } from "@/config/plan"
 
 enum UserStatus {
     ACTIVE = 'ACTIVE',
@@ -46,12 +47,6 @@ checkSubscription: privateProcedure.query(async ({ ctx }) => {
 
     if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND' })
 
-    // Initialize Razorpay instance
-    const razorpayInstance = new Razorpay({
-        key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
-        key_secret: process.env.RAZORPAY_SECRET_ID as string,
-    });
-
     let subscriptionId = dbUser.SubscriptionId
     let status = dbUser.status
     let isSubscribed = false
@@ -60,8 +55,13 @@ checkSubscription: privateProcedure.query(async ({ ctx }) => {
     let short_url = dbUser.short_url || null
 
     // If user has a subscription ID, fetch and update billing status
-    if (subscriptionId) {
+    if (subscriptionId && PAYMENTS_ENABLED) {
         try {
+            // Created only when needed: Razorpay throws at construction when keys are missing
+            const razorpayInstance = new Razorpay({
+                key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
+                key_secret: process.env.RAZORPAY_SECRET_ID as string,
+            });
             const subscription = await razorpayInstance.subscriptions.fetch(subscriptionId);
 
             // Update short_url if it has changed

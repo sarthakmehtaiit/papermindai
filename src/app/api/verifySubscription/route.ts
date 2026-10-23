@@ -3,6 +3,7 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/db";
+import { PAYMENTS_ENABLED } from "@/config/plan";
 
 enum UserStatus {
   ACTIVE = "ACTIVE",
@@ -13,6 +14,10 @@ enum UserStatus {
 }
 
 export async function POST(request: Request) {
+  if (!PAYMENTS_ENABLED) {
+    return NextResponse.json({ message: "Payments are disabled" }, { status: 503 });
+  }
+
   try {
     const { subscriptionId, paymentId, signature } = await request.json();
 
