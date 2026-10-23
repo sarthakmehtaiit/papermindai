@@ -7,7 +7,8 @@ import React, { PropsWithChildren, useState } from "react";
 import { trpc } from "../_trpc/client";
 
 export default function Provider({ children }: PropsWithChildren) {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+    // Relative URL works in the browser, so NEXT_PUBLIC_BASE_URL is optional
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? ""
     const [queryClient] = useState(() => new QueryClient());
     const [trpcClient] = useState(() =>
         trpc.createClient({
